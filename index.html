@@ -19,9 +19,37 @@
   <button id="loadBtn">Charger</button>
   <p id="status">Prêt.</p>
   <div id="molview"></div>
+  <h2>Bibliothèque</h2>
+  <div id="library"></div>
+ 
+  
 
   <script type="module">
     import { fetchSDF, renderSDFInto } from "./viewer.js";
+    import { library } from "./molecules.js";
+
+function buildLibrary() {
+  const el = document.getElementById("library");
+  for (const [theme, molecules] of Object.entries(library)) {
+    const h3 = document.createElement("h3");
+    h3.textContent = theme;
+    h3.style.fontSize = "13px";
+    el.appendChild(h3);
+    molecules.forEach(name => {
+      const btn = document.createElement("button");
+      btn.textContent = name;
+      btn.style.marginRight = "6px";
+      btn.style.marginBottom = "6px";
+      btn.addEventListener("click", () => {
+        document.getElementById("query").value = name;
+        load();
+      });
+      el.appendChild(btn);
+    });
+  }
+}
+buildLibrary();
+
 
     async function load() {
       const q = document.getElementById("query").value.trim();
