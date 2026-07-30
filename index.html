@@ -28,6 +28,8 @@
 </div>
 <p id="sarQuestion"></p>
 <button id="sarReveal">Voir la réponse</button>
+<p id="sarStatus" style="color:#F5A623; font-size:12px;"></p>
+
 <p id="sarAnswer" style="display:none;"></p>
 
 
@@ -42,12 +44,27 @@
 
 const pair = pairs[0];
 document.getElementById("sarQuestion").textContent = pair.question;
-fetchSDF(pair.a).then(sdf => renderSDFInto("molA", sdf));
-fetchSDF(pair.b).then(sdf => renderSDFInto("molB", sdf));
+async function loadSAR() {
+  try {
+    const sdfA = await fetchSDF(pair.a);
+    renderSDFInto("molA", sdfA);
+  } catch(e) {
+    document.getElementById("sarStatus").textContent = "Erreur molécule A (" + pair.a + ") : " + e.message;
+  }
+  try {
+    const sdfB = await fetchSDF(pair.b);
+    renderSDFInto("molB", sdfB);
+  } catch(e) {
+    document.getElementById("sarStatus").textContent += " | Erreur molécule B (" + pair.b + ") : " + e.message;
+  }
+}
+loadSAR();
+
 document.getElementById("sarReveal").addEventListener("click", () => {
   document.getElementById("sarAnswer").textContent = pair.answer;
   document.getElementById("sarAnswer").style.display = "block";
 });
+
 
 
 function buildLibrary() {
