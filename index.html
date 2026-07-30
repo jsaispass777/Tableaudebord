@@ -4,14 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tableau de bord</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.1.0/3Dmol-min.js"></script>
+  <style>
+    body { font-family: sans-serif; background:#0B0F14; color:#E6EDF3; padding:20px; }
+    input { padding:8px; font-size:14px; }
+    button { padding:8px 14px; font-size:14px; }
+    #molview { width:100%; height:350px; margin-top:14px; background:#070A0D; }
+  </style>
 </head>
 <body>
-  <h1>Ça fonctionne 🎉</h1>
-  <p id="status">Connexion en cours...</p>
+  <h1>Atelier structure</h1>
+
+  <input type="text" id="query" placeholder="nom ou SMILES" value="paracetamol">
+  <button id="loadBtn">Charger</button>
+  <p id="status">Prêt.</p>
+  <div id="molview"></div>
 
   <script type="module">
-    import { auth } from "./app.js";
-    document.getElementById("status").textContent = "Firebase chargé, prêt.";
+    import { fetchSDF, renderSDFInto } from "./viewer.js";
+
+    async function load() {
+      const q = document.getElementById("query").value.trim();
+      document.getElementById("status").textContent = "Chargement...";
+      try {
+        const sdf = await fetchSDF(q);
+        renderSDFInto("molview", sdf);
+        document.getElementById("status").textContent = "Chargé : " + q;
+      } catch (e) {
+        document.getElementById("status").textContent = "Erreur : " + e.message;
+      }
+    }
+
+    document.getElementById("loadBtn").addEventListener("click", load);
+    load();
   </script>
 </body>
 </html>
