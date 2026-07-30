@@ -21,12 +21,34 @@
   <div id="molview"></div>
   <h2>Bibliothèque</h2>
   <div id="library"></div>
+  <h2>Comparateur SAR</h2>
+<div style="display:flex; gap:20px;">
+  <div id="molA" style="width:45%; height:250px; background:#070A0D;"></div>
+  <div id="molB" style="width:45%; height:250px; background:#070A0D;"></div>
+</div>
+<p id="sarQuestion"></p>
+<button id="sarReveal">Voir la réponse</button>
+<p id="sarAnswer" style="display:none;"></p>
+
+
+  
  
   
 
   <script type="module">
     import { fetchSDF, renderSDFInto } from "./viewer.js";
     import { library } from "./molecules.js";
+    import { pairs } from "./sar.js";
+
+const pair = pairs[0];
+document.getElementById("sarQuestion").textContent = pair.question;
+fetchSDF(pair.a).then(sdf => renderSDFInto("molA", sdf));
+fetchSDF(pair.b).then(sdf => renderSDFInto("molB", sdf));
+document.getElementById("sarReveal").addEventListener("click", () => {
+  document.getElementById("sarAnswer").textContent = pair.answer;
+  document.getElementById("sarAnswer").style.display = "block";
+});
+
 
 function buildLibrary() {
   const el = document.getElementById("library");
